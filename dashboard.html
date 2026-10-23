@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard · Pitwall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand"><span class="brand-mark"></span>Pitwall</a>
+      <div class="nav-links">
+        <a href="index.html">Inicio</a>
+        <select id="season" class="season-select" aria-label="Temporada"></select>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <div class="dash-head">
+      <div>
+        <div class="eyebrow"><span class="dot"></span><span id="status">Cargando datos…</span></div>
+        <h1 id="title">Temporada</h1>
+      </div>
+    </div>
+
+    <div id="error"></div>
+
+    <div class="grid">
+      <!-- KPIs -->
+      <div class="card kpi span-3"><div class="bar-accent"></div><div class="label">Líder pilotos</div><div class="value skeleton" id="k1">—</div><div class="sub" id="k1s">&nbsp;</div></div>
+      <div class="card kpi span-3"><div class="bar-accent" style="background:var(--text)"></div><div class="label">Líder constructores</div><div class="value skeleton" id="k2">—</div><div class="sub" id="k2s">&nbsp;</div></div>
+      <div class="card kpi span-3"><div class="bar-accent" style="background:var(--faint)"></div><div class="label">Carreras disputadas</div><div class="value skeleton mono" id="k3">—</div><div class="sub" id="k3s">&nbsp;</div></div>
+      <div class="card kpi span-3"><div class="bar-accent" style="background:var(--line)"></div><div class="label">Ganadores distintos</div><div class="value skeleton mono" id="k4">—</div><div class="sub" id="k4s">&nbsp;</div></div>
+
+      <!-- Próximo GP -->
+      <section class="card span-4" id="next-card">
+        <div class="card-head"><h2 id="next-title">Próximo Gran Premio</h2><span class="meta" id="next-round"></span></div>
+        <div id="next-body"><div class="skeleton" style="height:220px"></div></div>
+      </section>
+
+      <!-- Último GP -->
+      <section class="card span-8">
+        <div class="card-head"><h2 id="last-title">Último Gran Premio</h2><span class="meta" id="last-meta"></span></div>
+        <div id="last-body"><div class="skeleton" style="height:220px"></div></div>
+      </section>
+
+      <!-- Pilotos -->
+      <section class="card span-7">
+        <div class="card-head"><h2>Mundial de pilotos</h2><span class="meta" id="drivers-meta"></span></div>
+        <div class="table-scroll" id="drivers-body"><div class="skeleton" style="height:400px"></div></div>
+      </section>
+
+      <!-- Constructores -->
+      <section class="card span-5">
+        <div class="card-head"><h2>Mundial de constructores</h2><span class="meta" id="teams-meta"></span></div>
+        <div id="teams-body"><div class="skeleton" style="height:400px"></div></div>
+      </section>
+
+      <!-- Evolución -->
+      <section class="card span-12">
+        <div class="card-head"><h2>Evolución de puntos · Top 5</h2><span class="meta">Acumulado por ronda, sprints incluidos</span></div>
+        <div class="chart-box"><canvas id="chart"></canvas></div>
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <!-- Calendario -->
+      <section class="card span-12">
+        <div class="card-head"><h2>Calendario</h2><span class="meta" id="cal-meta"></span></div>
+        <div class="calendar" id="calendar"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>Pitwall · proyecto no oficial, sin relación con Formula 1.</span>
+      <span>Datos: <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noopener">Jolpica F1 API</a> · Horarios en tu zona local</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

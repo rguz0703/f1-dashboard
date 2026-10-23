@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pitwall · Dashboard de F1</title>
+  <meta name="description" content="Clasificaciones, resultados y calendario de Fórmula 1 en un dashboard limpio, con datos abiertos." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand"><span class="brand-mark"></span>Pitwall</a>
+      <div class="nav-links">
+        <a href="#features">Qué incluye</a>
+        <a href="#data">Datos</a>
+        <a href="dashboard.html" class="btn btn-primary">Abrir dashboard</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="eyebrow"><span class="dot"></span><span id="season-tag">Temporada en curso</span></span>
+      <h1>La temporada de F1, <em>sin ruido.</em></h1>
+      <p class="lead">Clasificaciones, resultados, evolución de puntos y calendario en una sola vista. Datos abiertos, actualizados tras cada Gran Premio.</p>
+      <div class="hero-cta">
+        <a href="dashboard.html" class="btn btn-primary">Ver dashboard →</a>
+        <a href="#features" class="btn">Qué incluye</a>
+      </div>
+
+      <div class="preview" aria-live="polite">
+        <div>
+          <div class="label">Líder del mundial</div>
+          <div class="value skeleton" id="p-leader">Cargando</div>
+          <div class="sub" id="p-leader-sub">&nbsp;</div>
+        </div>
+        <div>
+          <div class="label">Constructores</div>
+          <div class="value skeleton" id="p-team">Cargando</div>
+          <div class="sub" id="p-team-sub">&nbsp;</div>
+        </div>
+        <div>
+          <div class="label">Último GP</div>
+          <div class="value skeleton" id="p-last">Cargando</div>
+          <div class="sub" id="p-last-sub">&nbsp;</div>
+        </div>
+        <div>
+          <div class="label">Próximo GP</div>
+          <div class="value skeleton" id="p-next">Cargando</div>
+          <div class="sub" id="p-next-sub">&nbsp;</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="features">
+    <div class="wrap">
+      <h2>Todo lo que importa de un vistazo.</h2>
+      <p class="intro">Sin anuncios, sin registro y sin pantallas cargadas. Solo los datos que sigues cada fin de semana.</p>
+      <div class="features">
+        <div class="feature"><div class="num">01</div><h3>Clasificación de pilotos</h3><p>Puntos, victorias y diferencia con el líder, con el color de cada equipo.</p></div>
+        <div class="feature"><div class="num">02</div><h3>Campeonato de constructores</h3><p>La pelea entre equipos comparada en barras proporcionales.</p></div>
+        <div class="feature"><div class="num">03</div><h3>Evolución de puntos</h3><p>Cómo se ha movido el top 5 carrera a carrera, sprints incluidos.</p></div>
+        <div class="feature"><div class="num">04</div><h3>Último Gran Premio</h3><p>Podio, vuelta rápida, pole y abandonos de la carrera más reciente.</p></div>
+        <div class="feature"><div class="num">05</div><h3>Cuenta atrás</h3><p>El próximo GP con todas sus sesiones en tu hora local.</p></div>
+        <div class="feature"><div class="num">06</div><h3>Temporadas anteriores</h3><p>Cambia de año y revisa cualquier campeonato desde 1950.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="data">
+    <div class="wrap">
+      <h2>Datos abiertos y gratuitos.</h2>
+      <p class="intro">Pitwall usa la API pública de Jolpica, la continuación comunitaria de Ergast. No necesita clave ni suscripción, y cubre todas las temporadas desde 1950.</p>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="wrap">
+      <h2>Listo para la próxima salida.</h2>
+      <div class="hero-cta"><a href="dashboard.html" class="btn btn-primary">Abrir dashboard →</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>Pitwall · proyecto no oficial, sin relación con Formula 1.</span>
+      <span>Datos: <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noopener">Jolpica F1 API</a></span>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    (async () => {
+      const set = (id, text, sub) => {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.classList.remove("skeleton");
+        if (sub !== undefined) document.getElementById(id + "-sub").textContent = sub;
+      };
+      try {
+        const [drivers, teams, races, last] = await Promise.all([
+          F1.driverStandings("current"),
+          F1.constructorStandings("current"),
+          F1.schedule("current"),
+          F1.lastResults("current"),
+        ]);
+        document.getElementById("season-tag").textContent = `Temporada ${drivers.season} · tras ronda ${drivers.round}`;
+        const d = drivers.DriverStandings[0];
+        set("p-leader", d.Driver.familyName, `${d.points} pts · ${d.wins} victorias`);
+        const t = teams.ConstructorStandings[0];
+        set("p-team", t.Constructor.name, `${t.points} pts`);
+        const w = last.Results[0];
+        set("p-last", last.raceName.replace("Grand Prix", "GP"), `Ganó ${w.Driver.familyName}`);
+        const next = nextRace(races);
+        if (next) set("p-next", next.raceName.replace("Grand Prix", "GP"), fmtDate(raceDate(next), { day: "numeric", month: "long" }));
+        else set("p-next", "Temporada cerrada", "Hasta el próximo año");
+      } catch (e) {
+        ["p-leader", "p-team", "p-last", "p-next"].forEach((id) => set(id, "—", "Sin conexión con la API"));
+      }
+    })();
+  </script>
+</body>
+</html>
